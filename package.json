@@ -1,0 +1,40 @@
+{
+  "name": "safar",
+  "version": "1.0.0",
+  "description": "A compiler for Delhi Metro journeys: a tiny DSL with a lexer, parser, semantic checker, route planner, CLI and live web playground.",
+  "keywords": ["compiler", "dsl", "parser", "static-analysis", "typescript", "delhi-metro", "route-planning"],
+  "author": "Prashant Singh (https://github.com/nox-pie)",
+  "license": "MIT",
+  "homepage": "https://nox-pie.github.io/safar/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nox-pie/safar.git"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "bin": {
+    "safarc": "./src/cli/safarc.ts"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "safarc": "node src/cli/safarc.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "bench": "node scripts/bench.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
