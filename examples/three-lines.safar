@@ -1,0 +1,8 @@
+# Three lines, changing at Mandi House and Rajiv Chowk
+board Kashmere Gate;
+ride Violet to Mandi House;
+change Blue;
+ride to Rajiv Chowk;
+change Yellow;
+ride to Hauz Khas;
+exit

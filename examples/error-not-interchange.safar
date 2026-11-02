@@ -1,0 +1,6 @@
+# Error: Patel Chowk is not an interchange
+board Rajiv Chowk;
+ride Yellow to Patel Chowk;
+change Violet;
+ride to Lajpat Nagar;
+exit

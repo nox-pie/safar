@@ -1,0 +1,5 @@
+# Vaishali is on a branch: change trains at Yamuna Bank
+board Vaishali
+ride Blue to Yamuna Bank
+ride Blue to Noida City Centre
+exit
