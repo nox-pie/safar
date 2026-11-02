@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Safar is a compiler for Delhi Metro journeys: write board / ride / change / exit and get a type-checked journey card, with fix-its, a route planner and a live view of every compiler stage." />
+    <meta property="og:title" content="Safar: a compiler for Delhi Metro journeys" />
+    <meta property="og:description" content="Lexer, parser, semantic checker and route planner for a tiny metro DSL, running live in your browser." />
+    <meta name="theme-color" content="#1D6FC4" />
+    <title>Safar · Metro Journey Compiler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%231D6FC4'/><path d='M9 22V10l7 8 7-8v12' stroke='white' stroke-width='3' fill='none' stroke-linejoin='round'/></svg>" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" /><path d="M9 22V10l7 8 7-8v12" /></svg>
+        <div>
+          <h1>Safar <span class="brand-sub">सफ़र</span></h1>
+          <p class="tagline">A compiler for Delhi Metro journeys</p>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="sr-only" for="examples">Load an example</label>
+        <select id="examples" class="btn"></select>
+        <button type="button" class="btn" id="share">Share</button>
+        <a class="btn" href="https://github.com/nox-pie/safar" target="_blank" rel="noopener">GitHub</a>
+        <button type="button" class="btn icon" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel" aria-labelledby="program-h">
+        <div class="panel-head">
+          <h2 id="program-h">Program</h2>
+          <span id="status" class="status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="editor">
+          <div class="gutter-wrap" aria-hidden="true"><div id="gutter" class="gutter"></div></div>
+          <div class="code">
+            <pre id="highlight" class="highlight" aria-hidden="true"></pre>
+            <textarea id="source" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-label="Journey program"></textarea>
+          </div>
+        </div>
+        <div id="completions" class="completions" hidden></div>
+
+        <div class="panel-head sub">
+          <h2>Problems <span id="problem-count" class="count"></span></h2>
+        </div>
+        <ul id="problems" class="problems"></ul>
+
+        <form id="planner" class="planner">
+          <h2>Route planner</h2>
+          <p class="muted">Pick two stations and the planner writes a valid program for the fastest route.</p>
+          <div class="planner-row">
+            <label>From <input id="plan-from" list="station-list" placeholder="Rajiv Chowk" required /></label>
+            <label>To <input id="plan-to" list="station-list" placeholder="Botanical Garden" required /></label>
+            <button type="submit" class="btn primary">Write program</button>
+          </div>
+          <p id="plan-msg" class="plan-msg" role="alert"></p>
+        </form>
+      </section>
+
+      <section class="panel output" aria-label="Compiler output">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" aria-selected="true" aria-controls="view-journey">Journey card</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="view-tokens">Tokens</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="view-ast">AST</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="view-ir">IR</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="view-network">Network</button>
+        </div>
+        <div id="view-journey" class="view" role="tabpanel"></div>
+        <div id="view-tokens" class="view" role="tabpanel" hidden></div>
+        <div id="view-ast" class="view" role="tabpanel" hidden></div>
+        <div id="view-ir" class="view" role="tabpanel" hidden></div>
+        <div id="view-network" class="view" role="tabpanel" hidden>
+          <p class="muted">Click a station to insert it at the cursor. Coloured dots mark interchanges.</p>
+          <div id="net-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-foot">
+      Safar compiles in your browser; nothing is sent anywhere. Times are estimates (~2.2 min per stop, +5 min per interchange, +3 min initial wait), and network data is a snapshot, so check the DMRC map for recent changes.
+    </footer>
+
+    <datalist id="station-list"></datalist>
+    <script type="module" src="/src/ui/main.ts"></script>
+  </body>
+</html>
