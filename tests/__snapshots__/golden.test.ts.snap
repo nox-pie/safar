@@ -1,0 +1,762 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`airport.safar > JSON 1`] = `
+{
+  "diagnostics": [],
+  "journey": {
+    "breakdown": {
+      "riding": 22.4,
+      "total": 30.4,
+      "transfers": 5,
+      "wait": 3,
+    },
+    "destination": "IGI Airport",
+    "interchanges": [
+      "New Delhi",
+    ],
+    "minutes": 30,
+    "origin": "Chandni Chowk",
+    "stations": 7,
+    "steps": [
+      {
+        "leg": {
+          "from": "Chandni Chowk",
+          "line": "Yellow",
+          "stations": [
+            "Chandni Chowk",
+            "Chawri Bazar",
+            "New Delhi",
+          ],
+          "stops": 2,
+          "to": "New Delhi",
+          "towards": [
+            "Millennium City Centre Gurugram",
+          ],
+        },
+      },
+      {
+        "transfer": {
+          "at": "New Delhi",
+          "from": "Yellow",
+          "kind": "interchange",
+          "minutes": 5,
+          "to": "Airport Express",
+        },
+      },
+      {
+        "leg": {
+          "from": "New Delhi",
+          "line": "Airport Express",
+          "stations": [
+            "New Delhi",
+            "Shivaji Stadium",
+            "Dhaula Kuan",
+            "Delhi Aerocity",
+            "IGI Airport",
+          ],
+          "stops": 4,
+          "to": "IGI Airport",
+          "towards": [
+            "Yashobhoomi Dwarka Sector 25",
+          ],
+        },
+      },
+    ],
+    "stops": 6,
+  },
+  "ok": true,
+}
+`;
+
+exports[`airport.safar > diagnostics 1`] = `""`;
+
+exports[`airport.safar > journey card and IR 1`] = `
+"SAFAR · DELHI METRO JOURNEY CARD
+Chandni Chowk → IGI Airport
+────────────────────────────────────────────────
+● Yellow line · towards Millennium City Centre Gurugram
+  Chandni Chowk → New Delhi · 2 stops · ~4 min
+  via Chawri Bazar
+⇄ Change to Airport Express at New Delhi · +5 min
+● Airport Express line · towards Yashobhoomi Dwarka Sector 25
+  New Delhi → IGI Airport · 4 stops · ~18 min
+  via Shivaji Stadium, Dhaula Kuan, Delhi Aerocity
+────────────────────────────────────────────────
+7 stations · 1 interchange · ~30 min
+(3 min wait + 22 min riding + 5 min changing)
+
+BOARD   Chandni Chowk
+RIDE    yellow   Chandni Chowk → New Delhi   hops=2 t=4.4
+                 towards Millennium City Centre Gurugram
+XFER    New Delhi                 yellow → airport   +5
+RIDE    airport  New Delhi → IGI Airport   hops=4 t=18.0
+                 towards Yashobhoomi Dwarka Sector 25
+EXIT    IGI Airport
+
+; time = wait 3 + riding 22.4 + changes 5 = 30.4 min"
+`;
+
+exports[`branch-line.safar > JSON 1`] = `
+{
+  "diagnostics": [],
+  "journey": {
+    "breakdown": {
+      "riding": 37.400000000000006,
+      "total": 44.400000000000006,
+      "transfers": 4,
+      "wait": 3,
+    },
+    "destination": "Noida City Centre",
+    "interchanges": [],
+    "minutes": 44,
+    "origin": "Vaishali",
+    "stations": 18,
+    "steps": [
+      {
+        "leg": {
+          "from": "Vaishali",
+          "line": "Blue",
+          "stations": [
+            "Vaishali",
+            "Kaushambi",
+            "Anand Vihar ISBT",
+            "Karkarduma",
+            "Preet Vihar",
+            "Nirman Vihar",
+            "Laxmi Nagar",
+            "Yamuna Bank",
+          ],
+          "stops": 7,
+          "to": "Yamuna Bank",
+          "towards": [
+            "Dwarka Sector 21",
+          ],
+        },
+      },
+      {
+        "transfer": {
+          "at": "Yamuna Bank",
+          "from": "Blue",
+          "kind": "train",
+          "minutes": 4,
+          "to": "Blue",
+        },
+      },
+      {
+        "leg": {
+          "from": "Yamuna Bank",
+          "line": "Blue",
+          "stations": [
+            "Yamuna Bank",
+            "Akshardham",
+            "Mayur Vihar Phase-1",
+            "Mayur Vihar Extension",
+            "New Ashok Nagar",
+            "Noida Sector 15",
+            "Noida Sector 16",
+            "Noida Sector 18",
+            "Botanical Garden",
+            "Golf Course",
+            "Noida City Centre",
+          ],
+          "stops": 10,
+          "to": "Noida City Centre",
+          "towards": [
+            "Noida Electronic City",
+          ],
+        },
+      },
+    ],
+    "stops": 17,
+  },
+  "ok": true,
+}
+`;
+
+exports[`branch-line.safar > diagnostics 1`] = `""`;
+
+exports[`branch-line.safar > journey card and IR 1`] = `
+"SAFAR · DELHI METRO JOURNEY CARD
+Vaishali → Noida City Centre
+────────────────────────────────────────────────
+● Blue line · towards Dwarka Sector 21
+  Vaishali → Yamuna Bank · 7 stops · ~15 min
+  via Kaushambi, Anand Vihar ISBT, Karkarduma, Preet Vihar, Nirman Vihar, Laxmi Nagar
+↻ Change train at Yamuna Bank (Blue line) · +4 min
+● Blue line · towards Noida Electronic City
+  Yamuna Bank → Noida City Centre · 10 stops · ~22 min
+  via Akshardham, Mayur Vihar Phase-1, Mayur Vihar Extension, New Ashok Nagar, Noida Sector 15, Noida Sector 16, Noida Sector 18, Botanical Garden, Golf Course
+────────────────────────────────────────────────
+18 stations · 0 interchanges · ~44 min
+(3 min wait + 37 min riding + 4 min changing)
+
+BOARD   Vaishali
+RIDE    blue     Vaishali → Yamuna Bank   hops=7 t=15.4
+                 towards Dwarka Sector 21
+TRAIN   Yamuna Bank               blue → blue   +4
+RIDE    blue     Yamuna Bank → Noida City Centre   hops=10 t=22.0
+                 towards Noida Electronic City
+EXIT    Noida City Centre
+
+; time = wait 3 + riding 37.4 + changes 4 = 44.4 min"
+`;
+
+exports[`error-not-interchange.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "E212",
+      "col": 1,
+      "fix": {
+        "end": 90,
+        "label": "Ride to Central Secretariat first",
+        "start": 90,
+        "text": "ride to Central Secretariat; ",
+      },
+      "help": "Nearest place to change to Violet: Central Secretariat (1 stop away on Yellow).",
+      "line": 4,
+      "message": "Patel Chowk is not an interchange; only the Yellow line stops here",
+      "severity": "error",
+    },
+  ],
+  "journey": null,
+  "ok": false,
+}
+`;
+
+exports[`error-not-interchange.safar > diagnostics 1`] = `
+"error[E212]: Patel Chowk is not an interchange; only the Yellow line stops here
+ --> error-not-interchange.safar:4:1
+  |
+4 | change Violet;
+  | ^^^^^^^^^^^^^
+  = help: Nearest place to change to Violet: Central Secretariat (1 stop away on Yellow)."
+`;
+
+exports[`error-not-interchange.safar > journey card and IR 1`] = `"(no journey)"`;
+
+exports[`error-syntax.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "E102",
+      "col": 17,
+      "fix": {
+        "end": 83,
+        "label": "Insert ';'",
+        "start": 83,
+        "text": "; ",
+      },
+      "help": "Separate statements with a semicolon or a new line.",
+      "line": 2,
+      "message": "Missing ';' before 'ride'",
+      "severity": "error",
+    },
+    {
+      "code": "E106",
+      "col": 1,
+      "fix": {
+        "end": 116,
+        "label": "Replace with 'ride'",
+        "start": 114,
+        "text": "ride",
+      },
+      "help": "Did you mean 'ride'? Commands are: board, ride, change, exit.",
+      "line": 3,
+      "message": "Unknown command 'go'",
+      "severity": "error",
+    },
+    {
+      "code": "E204",
+      "col": 1,
+      "fix": {
+        "end": 139,
+        "label": "Append 'exit'",
+        "start": 139,
+        "text": "
+exit",
+      },
+      "line": 4,
+      "message": "Journey never ends: add 'exit'",
+      "severity": "error",
+    },
+  ],
+  "journey": null,
+  "ok": false,
+}
+`;
+
+exports[`error-syntax.safar > diagnostics 1`] = `
+"error[E102]: Missing ';' before 'ride'
+ --> error-syntax.safar:2:17
+  |
+2 | board Hauz Khas ride Magenta to Kalkaji Mandir
+  |                 ^^^^
+  = help: Separate statements with a semicolon or a new line.
+
+error[E106]: Unknown command 'go'
+ --> error-syntax.safar:3:1
+  |
+3 | go Violet to Nehru Place
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+  = help: Did you mean 'ride'? Commands are: board, ride, change, exit.
+
+error[E204]: Journey never ends: add 'exit'
+ --> error-syntax.safar:4:1
+  |
+4 | 
+  | ^"
+`;
+
+exports[`error-syntax.safar > journey card and IR 1`] = `"(no journey)"`;
+
+exports[`error-typos.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "E206",
+      "col": 7,
+      "fix": {
+        "end": 63,
+        "label": "Replace with 'Rajiv Chowk'",
+        "start": 53,
+        "text": "Rajiv Chowk",
+      },
+      "help": "Did you mean 'Rajiv Chowk'?",
+      "line": 2,
+      "message": "Unknown station 'Rajiv Chok'",
+      "severity": "error",
+    },
+    {
+      "code": "E207",
+      "col": 24,
+      "fix": {
+        "end": 75,
+        "label": "Replace with 'Yellow'",
+        "start": 70,
+        "text": "Yellow",
+      },
+      "help": "Did you mean 'Yellow'? Lines: Red, Yellow, Blue, Green, Violet, Pink, Magenta, Airport Express and Grey.",
+      "line": 2,
+      "message": "Unknown line 'Yelow'",
+      "severity": "error",
+    },
+    {
+      "code": "E206",
+      "col": 33,
+      "fix": {
+        "end": 87,
+        "label": "Replace with 'Hauz Khas'",
+        "start": 79,
+        "text": "Hauz Khas",
+      },
+      "help": "Did you mean 'Hauz Khas'?",
+      "line": 2,
+      "message": "Unknown station 'Hauz Kas'",
+      "severity": "error",
+    },
+    {
+      "code": "E207",
+      "col": 50,
+      "fix": {
+        "end": 103,
+        "label": "Replace with 'Magenta'",
+        "start": 96,
+        "text": "Magenta",
+      },
+      "help": "Did you mean 'Magenta'? Lines: Red, Yellow, Blue, Green, Violet, Pink, Magenta, Airport Express and Grey.",
+      "line": 2,
+      "message": "Unknown line 'Magneta'",
+      "severity": "error",
+    },
+    {
+      "code": "E206",
+      "col": 67,
+      "fix": {
+        "end": 130,
+        "label": "Replace with 'Botanical Garden'",
+        "start": 113,
+        "text": "Botanical Garden",
+      },
+      "help": "Did you mean 'Botanical Garden'?",
+      "line": 2,
+      "message": "Unknown station 'Botanical Gardens'",
+      "severity": "error",
+    },
+  ],
+  "journey": null,
+  "ok": false,
+}
+`;
+
+exports[`error-typos.safar > diagnostics 1`] = `
+"error[E206]: Unknown station 'Rajiv Chok'
+ --> error-typos.safar:2:7
+  |
+2 | board Rajiv Chok; ride Yelow to Hauz Kas; change Magneta; ride to Botanical Gardens; exit
+  |       ^^^^^^^^^^
+  = help: Did you mean 'Rajiv Chowk'?
+
+error[E207]: Unknown line 'Yelow'
+ --> error-typos.safar:2:24
+  |
+2 | board Rajiv Chok; ride Yelow to Hauz Kas; change Magneta; ride to Botanical Gardens; exit
+  |                        ^^^^^
+  = help: Did you mean 'Yellow'? Lines: Red, Yellow, Blue, Green, Violet, Pink, Magenta, Airport Express and Grey.
+
+error[E206]: Unknown station 'Hauz Kas'
+ --> error-typos.safar:2:33
+  |
+2 | board Rajiv Chok; ride Yelow to Hauz Kas; change Magneta; ride to Botanical Gardens; exit
+  |                                 ^^^^^^^^
+  = help: Did you mean 'Hauz Khas'?
+
+error[E207]: Unknown line 'Magneta'
+ --> error-typos.safar:2:50
+  |
+2 | board Rajiv Chok; ride Yelow to Hauz Kas; change Magneta; ride to Botanical Gardens; exit
+  |                                                  ^^^^^^^
+  = help: Did you mean 'Magenta'? Lines: Red, Yellow, Blue, Green, Violet, Pink, Magenta, Airport Express and Grey.
+
+error[E206]: Unknown station 'Botanical Gardens'
+ --> error-typos.safar:2:67
+  |
+2 | board Rajiv Chok; ride Yelow to Hauz Kas; change Magneta; ride to Botanical Gardens; exit
+  |                                                                   ^^^^^^^^^^^^^^^^^
+  = help: Did you mean 'Botanical Garden'?"
+`;
+
+exports[`error-typos.safar > journey card and IR 1`] = `"(no journey)"`;
+
+exports[`error-wrong-line.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "E208",
+      "col": 35,
+      "fix": {
+        "end": 102,
+        "label": "Use suggested route",
+        "start": 71,
+        "text": "ride Blue to Botanical Garden",
+      },
+      "help": "Botanical Garden is on Blue and Magenta. Try: ride Blue to Botanical Garden",
+      "line": 2,
+      "message": "Botanical Garden is not on the Yellow line",
+      "severity": "error",
+    },
+  ],
+  "journey": null,
+  "ok": false,
+}
+`;
+
+exports[`error-wrong-line.safar > diagnostics 1`] = `
+"error[E208]: Botanical Garden is not on the Yellow line
+ --> error-wrong-line.safar:2:35
+  |
+2 | board Rajiv Chowk; ride Yellow to Botanical Garden; exit
+  |                                   ^^^^^^^^^^^^^^^^
+  = help: Botanical Garden is on Blue and Magenta. Try: ride Blue to Botanical Garden"
+`;
+
+exports[`error-wrong-line.safar > journey card and IR 1`] = `"(no journey)"`;
+
+exports[`problem-statement.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "I401",
+      "col": 1,
+      "fix": {
+        "end": 134,
+        "label": "Use faster route",
+        "start": 0,
+        "text": "board Rajiv Chowk;
+ride Blue to Botanical Garden;
+exit
+",
+      },
+      "help": "Your journey is valid; this is just a suggestion.",
+      "line": 2,
+      "message": "A faster route exists: Blue, ~32 min (saves ~25 min)",
+      "severity": "info",
+    },
+  ],
+  "journey": {
+    "breakdown": {
+      "riding": 48.400000000000006,
+      "total": 56.400000000000006,
+      "transfers": 5,
+      "wait": 3,
+    },
+    "destination": "Botanical Garden",
+    "interchanges": [
+      "Hauz Khas",
+    ],
+    "minutes": 56,
+    "origin": "Rajiv Chowk",
+    "stations": 23,
+    "steps": [
+      {
+        "leg": {
+          "from": "Rajiv Chowk",
+          "line": "Yellow",
+          "stations": [
+            "Rajiv Chowk",
+            "Patel Chowk",
+            "Central Secretariat",
+            "Udyog Bhawan",
+            "Lok Kalyan Marg",
+            "Jor Bagh",
+            "Dilli Haat INA",
+            "AIIMS",
+            "Green Park",
+            "Hauz Khas",
+          ],
+          "stops": 9,
+          "to": "Hauz Khas",
+          "towards": [
+            "Millennium City Centre Gurugram",
+          ],
+        },
+      },
+      {
+        "transfer": {
+          "at": "Hauz Khas",
+          "from": "Yellow",
+          "kind": "interchange",
+          "minutes": 5,
+          "to": "Magenta",
+        },
+      },
+      {
+        "leg": {
+          "from": "Hauz Khas",
+          "line": "Magenta",
+          "stations": [
+            "Hauz Khas",
+            "Panchsheel Park",
+            "Chirag Delhi",
+            "Greater Kailash",
+            "Nehru Enclave",
+            "Kalkaji Mandir",
+            "Okhla NSIC",
+            "Sukhdev Vihar",
+            "Jamia Millia Islamia",
+            "Okhla Vihar",
+            "Jasola Vihar Shaheen Bagh",
+            "Kalindi Kunj",
+            "Okhla Bird Sanctuary",
+            "Botanical Garden",
+          ],
+          "stops": 13,
+          "to": "Botanical Garden",
+          "towards": [
+            "Botanical Garden",
+          ],
+        },
+      },
+    ],
+    "stops": 22,
+  },
+  "ok": true,
+}
+`;
+
+exports[`problem-statement.safar > diagnostics 1`] = `
+"info[I401]: A faster route exists: Blue, ~32 min (saves ~25 min)
+ --> problem-statement.safar:2:1
+  |
+2 | board Rajiv Chowk; ride Yellow to Hauz Khas; change Magenta; ride to Botanical Garden; exit
+  | ^^^^^^^^^^^^^^^^^
+  = help: Your journey is valid; this is just a suggestion."
+`;
+
+exports[`problem-statement.safar > journey card and IR 1`] = `
+"SAFAR · DELHI METRO JOURNEY CARD
+Rajiv Chowk → Botanical Garden
+────────────────────────────────────────────────
+● Yellow line · towards Millennium City Centre Gurugram
+  Rajiv Chowk → Hauz Khas · 9 stops · ~20 min
+  via Patel Chowk, Central Secretariat, Udyog Bhawan, Lok Kalyan Marg, Jor Bagh, Dilli Haat INA, AIIMS, Green Park
+⇄ Change to Magenta at Hauz Khas · +5 min
+● Magenta line · towards Botanical Garden
+  Hauz Khas → Botanical Garden · 13 stops · ~29 min
+  via Panchsheel Park, Chirag Delhi, Greater Kailash, Nehru Enclave, Kalkaji Mandir, Okhla NSIC, Sukhdev Vihar, Jamia Millia Islamia, Okhla Vihar, Jasola Vihar Shaheen Bagh, Kalindi Kunj, Okhla Bird Sanctuary
+────────────────────────────────────────────────
+23 stations · 1 interchange · ~56 min
+(3 min wait + 48 min riding + 5 min changing)
+
+BOARD   Rajiv Chowk
+RIDE    yellow   Rajiv Chowk → Hauz Khas   hops=9 t=19.8
+                 towards Millennium City Centre Gurugram
+XFER    Hauz Khas                 yellow → magenta   +5
+RIDE    magenta  Hauz Khas → Botanical Garden   hops=13 t=28.6
+                 towards Botanical Garden
+EXIT    Botanical Garden
+
+; time = wait 3 + riding 48.4 + changes 5 = 56.4 min"
+`;
+
+exports[`three-lines.safar > JSON 1`] = `
+{
+  "diagnostics": [
+    {
+      "code": "I401",
+      "col": 1,
+      "fix": {
+        "end": 177,
+        "label": "Use faster route",
+        "start": 0,
+        "text": "board Kashmere Gate;
+ride Yellow to Hauz Khas;
+exit
+",
+      },
+      "help": "Your journey is valid; this is just a suggestion.",
+      "line": 2,
+      "message": "A faster route exists: Yellow, ~32 min (saves ~17 min)",
+      "severity": "info",
+    },
+  ],
+  "journey": {
+    "breakdown": {
+      "riding": 35.2,
+      "total": 48.2,
+      "transfers": 10,
+      "wait": 3,
+    },
+    "destination": "Hauz Khas",
+    "interchanges": [
+      "Mandi House",
+      "Rajiv Chowk",
+    ],
+    "minutes": 48,
+    "origin": "Kashmere Gate",
+    "stations": 17,
+    "steps": [
+      {
+        "leg": {
+          "from": "Kashmere Gate",
+          "line": "Violet",
+          "stations": [
+            "Kashmere Gate",
+            "Lal Qila",
+            "Jama Masjid",
+            "Delhi Gate",
+            "ITO",
+            "Mandi House",
+          ],
+          "stops": 5,
+          "to": "Mandi House",
+          "towards": [
+            "Raja Nahar Singh",
+          ],
+        },
+      },
+      {
+        "transfer": {
+          "at": "Mandi House",
+          "from": "Violet",
+          "kind": "interchange",
+          "minutes": 5,
+          "to": "Blue",
+        },
+      },
+      {
+        "leg": {
+          "from": "Mandi House",
+          "line": "Blue",
+          "stations": [
+            "Mandi House",
+            "Barakhamba Road",
+            "Rajiv Chowk",
+          ],
+          "stops": 2,
+          "to": "Rajiv Chowk",
+          "towards": [
+            "Dwarka Sector 21",
+          ],
+        },
+      },
+      {
+        "transfer": {
+          "at": "Rajiv Chowk",
+          "from": "Blue",
+          "kind": "interchange",
+          "minutes": 5,
+          "to": "Yellow",
+        },
+      },
+      {
+        "leg": {
+          "from": "Rajiv Chowk",
+          "line": "Yellow",
+          "stations": [
+            "Rajiv Chowk",
+            "Patel Chowk",
+            "Central Secretariat",
+            "Udyog Bhawan",
+            "Lok Kalyan Marg",
+            "Jor Bagh",
+            "Dilli Haat INA",
+            "AIIMS",
+            "Green Park",
+            "Hauz Khas",
+          ],
+          "stops": 9,
+          "to": "Hauz Khas",
+          "towards": [
+            "Millennium City Centre Gurugram",
+          ],
+        },
+      },
+    ],
+    "stops": 16,
+  },
+  "ok": true,
+}
+`;
+
+exports[`three-lines.safar > diagnostics 1`] = `
+"info[I401]: A faster route exists: Yellow, ~32 min (saves ~17 min)
+ --> three-lines.safar:2:1
+  |
+2 | board Kashmere Gate;
+  | ^^^^^^^^^^^^^^^^^^^
+  = help: Your journey is valid; this is just a suggestion."
+`;
+
+exports[`three-lines.safar > journey card and IR 1`] = `
+"SAFAR · DELHI METRO JOURNEY CARD
+Kashmere Gate → Hauz Khas
+────────────────────────────────────────────────
+● Violet line · towards Raja Nahar Singh
+  Kashmere Gate → Mandi House · 5 stops · ~11 min
+  via Lal Qila, Jama Masjid, Delhi Gate, ITO
+⇄ Change to Blue at Mandi House · +5 min
+● Blue line · towards Dwarka Sector 21
+  Mandi House → Rajiv Chowk · 2 stops · ~4 min
+  via Barakhamba Road
+⇄ Change to Yellow at Rajiv Chowk · +5 min
+● Yellow line · towards Millennium City Centre Gurugram
+  Rajiv Chowk → Hauz Khas · 9 stops · ~20 min
+  via Patel Chowk, Central Secretariat, Udyog Bhawan, Lok Kalyan Marg, Jor Bagh, Dilli Haat INA, AIIMS, Green Park
+────────────────────────────────────────────────
+17 stations · 2 interchanges · ~48 min
+(3 min wait + 35 min riding + 10 min changing)
+
+BOARD   Kashmere Gate
+RIDE    violet   Kashmere Gate → Mandi House   hops=5 t=11.0
+                 towards Raja Nahar Singh
+XFER    Mandi House               violet → blue   +5
+RIDE    blue     Mandi House → Rajiv Chowk   hops=2 t=4.4
+                 towards Dwarka Sector 21
+XFER    Rajiv Chowk               blue → yellow   +5
+RIDE    yellow   Rajiv Chowk → Hauz Khas   hops=9 t=19.8
+                 towards Millennium City Centre Gurugram
+EXIT    Hauz Khas
+
+; time = wait 3 + riding 35.2 + changes 10 = 48.2 min"
+`;
