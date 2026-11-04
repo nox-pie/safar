@@ -46,17 +46,33 @@ export function normalize(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-export function levenshtein(a: string, b: string): number {
-  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+/**
+ * Edit distance. With `max`, gives up early and returns `max + 1` once the answer is
+ * known to exceed it, so scanning every station name for a typo stays cheap.
+ */
+export function levenshtein(a: string, b: string, max = Infinity): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  if (rowA.length <= b.length) [rowA, rowB] = [new Int32Array(b.length * 2 + 1), new Int32Array(b.length * 2 + 1)];
+  let prev = rowA;
+  let cur = rowB;
+  for (let j = 0; j <= b.length; j++) prev[j] = j;
   for (let i = 1; i <= a.length; i++) {
-    const cur = [i];
+    cur[0] = i;
+    let rowMin = i;
+    const ca = a.charCodeAt(i - 1);
     for (let j = 1; j <= b.length; j++) {
-      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      const v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca === b.charCodeAt(j - 1) ? 0 : 1));
+      cur[j] = v;
+      if (v < rowMin) rowMin = v;
     }
-    prev = cur;
+    if (rowMin > max) return max + 1;
+    [prev, cur] = [cur, prev];
   }
   return prev[b.length];
 }
+// Reused DP rows: suggestions scan every station name, so avoid allocating per call.
+let rowA = new Int32Array(64);
+let rowB = new Int32Array(64);
 
 interface NameEntry {
   key: string;
@@ -69,8 +85,7 @@ function suggest(query: string, entries: NameEntry[], limit: number): string[] {
   const threshold = Math.max(2, Math.floor(q.length / 3));
   const scored: { name: string; score: number }[] = [];
   for (const e of entries) {
-    let score = levenshtein(q, e.key);
-    if (q.length >= 3 && e.key.startsWith(q)) score = Math.min(score, 1);
+    const score = q.length >= 3 && e.key.startsWith(q) ? 1 : levenshtein(q, e.key, threshold);
     if (score <= threshold) scored.push({ name: e.name, score });
   }
   scored.sort((a, b) => a.score - b.score || a.name.localeCompare(b.name));
