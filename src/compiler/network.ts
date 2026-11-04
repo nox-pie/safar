@@ -1,3 +1,4 @@
+import { MinHeap } from './min-heap.ts';
 import { LINES, STATION_ALIASES, type RawLine } from './network-data.ts';
 
 // Time model (minutes). Per-hop times live on each line.
@@ -16,6 +17,8 @@ export interface Service {
   line: Line;
   stations: Station[];
   index: Map<Station, number>;
+  /** Planner node id of stations[0]; stations[i] is node base + i. */
+  base: number;
 }
 
 export interface Line {
@@ -81,6 +84,9 @@ export class Network {
   private lineByKey = new Map<string, Line>();
   private stationNames: NameEntry[] = [];
   private lineNames: NameEntry[] = [];
+  // Planner graph: one node per (service, station), as dense integer ids.
+  private nodeService: Service[] = [];
+  private stationNodes = new Map<Station, number[]>();
 
   constructor(raw: RawLine[], aliases: Record<string, string>) {
     for (const r of raw) {
@@ -91,9 +97,16 @@ export class Network {
 
       r.services.forEach((names, i) => {
         const stations = names.map((n) => this.intern(n));
-        const service: Service = { id: `${r.id}-${i}`, line, stations, index: new Map(stations.map((s, j) => [s, j])) };
+        const base = this.nodeService.length;
+        const service: Service = { id: `${r.id}-${i}`, line, stations, index: new Map(stations.map((s, j) => [s, j])), base };
         if (service.index.size !== stations.length) throw new Error(`${service.id} lists a station twice`);
         line.services.push(service);
+        stations.forEach((st, j) => {
+          this.nodeService.push(service);
+          const nodes = this.stationNodes.get(st) ?? [];
+          nodes.push(base + j);
+          this.stationNodes.set(st, nodes);
+        });
         for (const st of stations) {
           if (!st.lines.includes(line)) {
             st.lines.push(line);
@@ -177,48 +190,52 @@ export class Network {
     return best;
   }
 
-  /** Fastest route (Dijkstra over (service, station) states) using the same time model as the card. */
+  /**
+   * Fastest route using the same time model as the journey card. Dijkstra over
+   * (service, station) nodes: riding to a neighbour costs the line's per-hop time,
+   * switching service at a station costs an interchange or a same-line train change.
+   */
   plan(from: Station, to: Station): Route | null {
     if (from === to) return null;
-    const keyOf = (s: Service, st: Station) => `${s.id}|${st.key}`;
-    const dist = new Map<string, number>();
-    const prev = new Map<string, string | null>();
-    const nodes = new Map<string, [Service, Station]>();
-    const done = new Set<string>();
-    const relax = (s: Service, st: Station, d: number, p: string | null) => {
-      const k = keyOf(s, st);
-      if (d < (dist.get(k) ?? Infinity)) {
-        dist.set(k, d);
-        prev.set(k, p);
-        nodes.set(k, [s, st]);
+    const n = this.nodeService.length;
+    const dist = new Float64Array(n).fill(Infinity);
+    const prev = new Int32Array(n).fill(-1);
+    const done = new Uint8Array(n);
+    const queue = new MinHeap<number>();
+    const relax = (node: number, d: number, from: number) => {
+      if (d < dist[node]) {
+        dist[node] = d;
+        prev[node] = from;
+        queue.push(d, node); // stale entries are skipped on pop (lazy deletion)
       }
     };
-    for (const line of from.lines) for (const s of line.services) if (s.index.has(from)) relax(s, from, 0, null);
+    for (const node of this.stationNodes.get(from)!) relax(node, 0, -1);
 
-    for (;;) {
-      let cur: string | null = null;
-      let curD = Infinity;
-      for (const [k, d] of dist) if (!done.has(k) && d < curD) [cur, curD] = [k, d];
-      if (cur === null) return null;
-      done.add(cur);
-      const [s, st] = nodes.get(cur)!;
-      if (st === to) return this.buildRoute(cur, prev, nodes, curD);
+    while (queue.size > 0) {
+      const { priority: d, value: node } = queue.pop()!;
+      if (done[node]) continue;
+      done[node] = 1;
+      const [s, st] = this.nodeAt(node);
+      if (st === to) return this.buildRoute(node, prev, d);
 
-      const i = s.index.get(st)!;
-      for (const j of [i - 1, i + 1]) {
-        if (j >= 0 && j < s.stations.length) relax(s, s.stations[j], curD + s.line.minutesPerHop, cur);
-      }
-      for (const line of st.lines) {
-        for (const s2 of line.services) {
-          if (s2 !== s && s2.index.has(st)) relax(s2, st, curD + (line === s.line ? TRAIN_CHANGE_MIN : INTERCHANGE_MIN), cur);
-        }
+      const i = node - s.base;
+      if (i > 0) relax(node - 1, d + s.line.minutesPerHop, node);
+      if (i < s.stations.length - 1) relax(node + 1, d + s.line.minutesPerHop, node);
+      for (const other of this.stationNodes.get(st)!) {
+        if (other !== node) relax(other, d + (this.nodeService[other].line === s.line ? TRAIN_CHANGE_MIN : INTERCHANGE_MIN), node);
       }
     }
+    return null;
   }
 
-  private buildRoute(goal: string, prev: Map<string, string | null>, nodes: Map<string, [Service, Station]>, d: number): Route {
+  private nodeAt(node: number): [Service, Station] {
+    const s = this.nodeService[node];
+    return [s, s.stations[node - s.base]];
+  }
+
+  private buildRoute(goal: number, prev: Int32Array, d: number): Route {
     const chain: [Service, Station][] = [];
-    for (let k: string | null = goal; k !== null; k = prev.get(k) ?? null) chain.unshift(nodes.get(k)!);
+    for (let k = goal; k !== -1; k = prev[k]) chain.unshift(this.nodeAt(k));
     const rides: RouteRide[] = [];
     let [segService, segFrom] = chain[0];
     for (let i = 1; i <= chain.length; i++) {
