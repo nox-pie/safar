@@ -8,10 +8,13 @@ import { completionsAt, type Completion } from './completions.ts';
 import { EXAMPLES } from './examples.ts';
 import { renderHighlight } from './highlight.ts';
 import { esc } from './html.ts';
+import { formatTime, profile, renderPipeline } from './pipeline.ts';
 import { renderAst, renderNetwork, renderTokens } from './views.ts';
 
 const STORAGE_KEY = 'safar:source';
 const THEME_KEY = 'safar:theme';
+/** Profiling waits until typing pauses so it never slows the editor down. */
+const PROFILE_DELAY_MS = 200;
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const editor = $<HTMLTextAreaElement>('source');
@@ -21,6 +24,7 @@ const problems = $('problems');
 const problemCount = $('problem-count');
 const status = $('status');
 const completionBar = $('completions');
+const pipeline = $('pipeline');
 const views = {
   journey: $('view-journey'),
   tokens: $('view-tokens'),
@@ -31,6 +35,7 @@ const views = {
 let result: CompileResult;
 let lastJourney: Journey | null = null;
 let completions: Completion[] = [];
+let profileTimer: ReturnType<typeof setTimeout> | undefined;
 
 const store = {
   get(key: string) {
@@ -58,6 +63,15 @@ function run() {
   renderViews();
   updateCompletions();
 
+  pipeline.innerHTML = renderPipeline(result);
+  clearTimeout(profileTimer);
+  const profiled = result;
+  profileTimer = setTimeout(() => {
+    if (profiled !== result) return;
+    const timings = profile(source, profiled);
+    const total = Object.values(timings).reduce((a, b) => a + b, 0);
+    pipeline.innerHTML = renderPipeline(profiled, timings) + `<li class="stage-total">compiled in <strong>${formatTime(total)}</strong></li>`;
+  }, PROFILE_DELAY_MS);
 }
 
 function renderStatus() {
@@ -209,6 +223,13 @@ function selectTab(panelId: string) {
   });
 }
 tabs.forEach((tab) => tab.addEventListener('click', () => selectTab(tab.getAttribute('aria-controls')!)));
+
+pipeline.addEventListener('click', (e) => {
+  const target = (e.target as HTMLElement).closest<HTMLElement>('[data-stage-tab]')?.dataset.stageTab;
+  if (!target) return;
+  if (target === 'problems') problems.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  else selectTab(target);
+});
 
 document.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
