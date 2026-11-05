@@ -132,25 +132,30 @@ export function check(program: Program, net: Network): CheckResult {
     const prevLine = line;
     station = dest;
     line = rideLine ?? line;
-    if (!dest || !from || !rideLine) return;
+    if (!from || !rideLine) return;
 
-    if (dest === from) {
-      report('error', 'E209', `You're already at ${dest.name}`, stmt.dest.span);
-      return;
-    }
+    // Checked before the destination so a typo there doesn't hide this error.
     const servesFrom = rideLine.stations.includes(from);
-    const servesTo = rideLine.stations.includes(dest);
     if (!servesFrom) {
       report('error', 'E208', `The ${rideLine.name} line doesn't stop at ${from.name}`, stmt.line?.span ?? stmt.keyword, {
         help: `${from.name} is on the ${lineList(from.lines)} line${from.lines.length > 1 ? 's' : ''}.`,
       });
     }
+    if (!dest) return;
+    if (dest === from) {
+      report('error', 'E209', `You're already at ${dest.name}`, stmt.dest.span);
+      return;
+    }
+    const servesTo = rideLine.stations.includes(dest);
     if (!servesTo) {
       const route = servesFrom ? routeFix(stmt, from, dest, prevLine, 'Use suggested route') : null;
       report('error', 'E208', `${dest.name} is not on the ${rideLine.name} line`, stmt.dest.span, {
         help: `${dest.name} is on ${lineList(dest.lines)}.${route ? ` ${route.help}` : ''}`,
         fix: route?.fix,
       });
+      // The traveller can't actually be at dest on this line; don't let the next ride
+      // report "line doesn't stop at <dest>" as a second, derived error.
+      station = null;
     }
     if (!servesFrom || !servesTo) return;
 

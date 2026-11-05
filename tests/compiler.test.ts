@@ -151,3 +151,14 @@ describe('journey card', () => {
   });
 });
 
+// Found by the fuzzer (tests/properties.test.ts).
+describe('error recovery regressions', () => {
+  it('does not cascade after a destination that is not on the line', () => {
+    const src = 'board Rajiv Chowk; ride Yellow to Botanical Garden; ride to Noida Sector 18; exit';
+    expect(errors(src)).toEqual(['E208']);
+  });
+
+  it('still checks the boarding line when the destination has a typo', () => {
+    expect(errors('board Tis Hazari; ride Magenta to Inderok; exit')).toEqual(['E208', 'E206']);
+  });
+});
