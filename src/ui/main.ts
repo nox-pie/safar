@@ -12,6 +12,7 @@ import { formatTime, profile, renderPipeline } from './pipeline.ts';
 import { renderAst, renderNetwork, renderTokens } from './views.ts';
 
 const STORAGE_KEY = 'safar:source';
+const LOGO_URL = `${import.meta.env.BASE_URL}logo.svg`;
 const THEME_KEY = 'safar:theme';
 /** Profiling waits until typing pauses so it never slows the editor down. */
 const PROFILE_DELAY_MS = 200;
@@ -118,7 +119,7 @@ function renderViews() {
       <div class="stale-banner">Fix ${errors} error${errors === 1 ? '' : 's'} to update the card. Showing the last valid journey.</div>
       <div class="stale">${renderCard(lastJourney)}</div>`;
   } else {
-    views.journey.innerHTML = `<div class="empty-state"><div class="empty-icon" aria-hidden="true">⌁</div><p>Fix ${errors} error${errors === 1 ? '' : 's'} to see your journey card.</p></div>`;
+    views.journey.innerHTML = `<div class="empty-state"><img class="empty-icon" src="${LOGO_URL}" alt="" width="40" height="40"><p>Fix ${errors} error${errors === 1 ? '' : 's'} to see your journey card.</p></div>`;
   }
   views.tokens.innerHTML = renderTokens(result);
   views.ast.innerHTML = renderAst(result);
