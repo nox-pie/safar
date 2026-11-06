@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: Typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Test (with coverage thresholds)
+        run: npm run test:coverage
+      - run: npm run build
+      - name: CLI smoke test
+        run: |
+          node src/cli/safarc.ts examples/problem-statement.safar
+          set +e
+          node src/cli/safarc.ts examples/error-typos.safar
+          code=$?
+          set -e
+          test "$code" -eq 1   # compile errors must exit 1
+      - name: Benchmark
+        run: npm run bench
