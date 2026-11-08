@@ -5,7 +5,7 @@
   "keywords": ["compiler", "dsl", "parser", "static-analysis", "typescript", "delhi-metro", "route-planning"],
   "author": "Prashant Kumar (https://github.com/nox-pie)",
   "license": "MIT",
-  "homepage": "https://nox-pie.github.io/safar/",
+  "homepage": "https://safar-compiler.vercel.app",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nox-pie/safar.git"

@@ -11,13 +11,13 @@ metro network, then compiles it into a journey card with stations, interchanges 
 Mistakes get rustc-style errors with one-click fixes.
 
 [![CI](https://github.com/nox-pie/safar/actions/workflows/ci.yml/badge.svg)](https://github.com/nox-pie/safar/actions/workflows/ci.yml)
-[![Deploy](https://github.com/nox-pie/safar/actions/workflows/deploy.yml/badge.svg)](https://nox-pie.github.io/safar/)
+[![Vercel](https://img.shields.io/badge/live-Vercel-000000?logo=vercel&logoColor=white)](https://safar-compiler.vercel.app)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Coverage](https://img.shields.io/badge/coverage-98%25-2DA44E)
 ![Dependencies](https://img.shields.io/badge/runtime%20deps-0-2DA44E)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**[▶ Try the live playground](https://nox-pie.github.io/safar/)** · [Language reference](docs/LANGUAGE.md) · [Architecture](docs/ARCHITECTURE.md)
+**[▶ Try the live playground](https://safar-compiler.vercel.app)** · [Language reference](docs/LANGUAGE.md) · [Architecture](docs/ARCHITECTURE.md)
 
 <img src="docs/images/demo.gif" alt="Typing a journey in the Safar playground, getting an error, and applying the suggested fix" width="900">
 
@@ -136,7 +136,7 @@ The full write-up, including design decisions, error recovery and the overlay-ed
 | **Web** | Vite 8, vanilla DOM, CSS custom properties (light/dark), textarea-over-`<pre>` highlighting overlay |
 | **CLI** | Node ≥ 22.18 native TypeScript execution, `node:util` `parseArgs`, ANSI diagnostics |
 | **Testing** | Vitest 5: unit, golden snapshots, property-based fuzzing, CLI (subprocess and in-process), v8 coverage with enforced thresholds |
-| **CI/CD** | GitHub Actions (typecheck → test + coverage → build → CLI smoke test → benchmark) and GitHub Pages deploy |
+| **CI/CD** | GitHub Actions (typecheck → test + coverage → build → CLI smoke test → benchmark); Vercel deploys `main` to production and every pull request to a preview |
 
 ## Quality
 
