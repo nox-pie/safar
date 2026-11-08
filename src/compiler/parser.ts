@@ -19,7 +19,12 @@ function suggestCommand(word: string): string | undefined {
   return ['board', 'ride', 'change', 'exit'].find((c) => levenshtein(w, c) <= 2);
 }
 
-export function parse(allTokens: Token[]): { program: Program; diagnostics: Diagnostic[] } {
+export interface ParseOptions {
+  /** Recognizes line names, so `ride Yellow` isn't "fixed" into a ride to a station called Yellow. */
+  isLine?: (name: string) => boolean;
+}
+
+export function parse(allTokens: Token[], { isLine = () => false }: ParseOptions = {}): { program: Program; diagnostics: Diagnostic[] } {
   const tokens = allTokens.filter((t) => t.type !== 'comment');
   const diagnostics: Diagnostic[] = [];
   let pos = 0;
@@ -78,9 +83,12 @@ export function parse(allTokens: Token[]): { program: Program; diagnostics: Diag
           if (!dest) error('E104', "Expected a station name after 'to'", to.span, { help: 'Example: ride Yellow to Hauz Khas' });
           return { kind: 'ride', span: spanTo(dest?.span.end ?? to.span.end), keyword: kw.span, line, dest };
         }
+        const named = line && isLine(line.text) ? line : null;
         error('E103', "Expected 'to' in ride", line?.span ?? kw.span, {
-          help: line ? `A ride needs a destination: 'ride <line> to <station>' or 'ride to <station>'.` : "Write 'ride <line> to <station>'.",
-          fix: line ? { label: `Change to 'ride to ${line.text}'`, span: line.span, text: `to ${line.text}` } : undefined,
+          help: named
+            ? `Say where to ride: 'ride ${named.text} to <station>'.`
+            : line ? `A ride needs a destination: 'ride <line> to <station>' or 'ride to <station>'.` : "Write 'ride <line> to <station>'.",
+          fix: line && !named ? { label: `Change to 'ride to ${line.text}'`, span: line.span, text: `to ${line.text}` } : undefined,
         });
         return { kind: 'ride', span: spanTo(line?.span.end ?? kw.span.end), keyword: kw.span, line: null, dest: null };
       }

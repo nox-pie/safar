@@ -33,8 +33,8 @@ export function compile(source: string, net: Network = defaultNetwork): CompileR
   };
 
   const tokens = timed('lex', () => lex(source));
-  const { program, diagnostics: syntax } = timed('parse', () => parse(tokens));
-  const checked = timed('check', () => check(program, net));
+  const { program, diagnostics: syntax } = timed('parse', () => parse(tokens, { isLine: (name) => net.line(name) !== undefined }));
+  const checked = timed('check', () => check(program, net, { hasSyntaxErrors: syntax.length > 0 }));
   const diagnostics = [...syntax, ...checked.diagnostics];
 
   let journey: Journey | null = null;

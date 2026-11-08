@@ -30,7 +30,12 @@ const lineList = (lines: Line[]) => list(lines.map((l) => l.name));
  * line they are on. After an error the state is repaired optimistically (or marked
  * unknown) so one mistake doesn't cascade into a page of follow-on errors.
  */
-export function check(program: Program, net: Network): CheckResult {
+export interface CheckOptions {
+  /** The parser already reported errors, so "empty program"/"no ride" findings would be noise. */
+  hasSyntaxErrors?: boolean;
+}
+
+export function check(program: Program, net: Network, { hasSyntaxErrors = false }: CheckOptions = {}): CheckResult {
   const diagnostics: Diagnostic[] = [];
   const rides: ResolvedRide[] = [];
   const rideLines = new Map<RideStmt, Line>();
@@ -44,6 +49,8 @@ export function check(program: Program, net: Network): CheckResult {
   /** null = unknown, either before boarding or after an error. */
   let station: Station | null = null;
   let line: Line | null = null;
+  /** The line couldn't be resolved (a typo or an ambiguous first ride): skip checks that depend on it. */
+  let lineUnknown = false;
   // Widened explicitly: it's only reassigned inside the closures below, which TS doesn't track.
   let pendingChange = null as ChangeStmt | null;
 
@@ -114,7 +121,7 @@ export function check(program: Program, net: Network): CheckResult {
       }
     } else if (line) {
       rideLine = line;
-    } else if (station) {
+    } else if (station && !lineUnknown) {
       if (station.lines.length === 1) {
         rideLine = station.lines[0];
       } else {
@@ -127,6 +134,8 @@ export function check(program: Program, net: Network): CheckResult {
       }
     }
     if (rideLine) rideLines.set(stmt, rideLine);
+    if (rideLine) lineUnknown = false;
+    else if (stmt.line || !line) lineUnknown = true;
 
     const from = station;
     const prevLine = line;
@@ -176,14 +185,31 @@ export function check(program: Program, net: Network): CheckResult {
   function checkChange(stmt: ChangeStmt) {
     if (!stmt.line) return;
     const target = resolveLine(stmt.line);
-    if (!target) return;
+    if (!target) {
+      line = null;
+      lineUnknown = true;
+      pendingChange = null;
+      return;
+    }
     if (pendingChange) {
       report('warning', 'W302', `You changed to ${pendingChange.line!.text} but never rode it`, pendingChange.span);
     }
     pendingChange = stmt;
     const current = line;
+    const wasUnknown = lineUnknown;
     line = target;
+    lineUnknown = false;
     if (!station) return;
+    if (wasUnknown) {
+      // The previous line is unknown, so interchange rules can't be checked, but the new line must still stop here.
+      if (!target.stations.includes(station)) {
+        report('error', 'E213', `The ${target.name} line doesn't stop at ${station.name}`, stmt.line.span, {
+          help: `${station.name} is on the ${lineList(station.lines)} line${station.lines.length > 1 ? 's' : ''}.`,
+        });
+        station = null;
+      }
+      return;
+    }
 
     if (!current) {
       report('error', 'E215', "You haven't ridden a line yet, so there's nothing to change from", stmt.span, {
@@ -217,7 +243,7 @@ export function check(program: Program, net: Network): CheckResult {
   }
 
   const statements = program.statements;
-  if (statements.length === 0) {
+  if (statements.length === 0 && !hasSyntaxErrors) {
     report('error', 'E201', "Empty program: a journey starts with 'board <station>'", { start: 0, end: 0 }, {
       fix: { label: 'Insert example', span: { start: 0, end: 0 }, text: 'board Rajiv Chowk;\nride Yellow to Hauz Khas;\nexit\n' },
     });
@@ -251,7 +277,8 @@ export function check(program: Program, net: Network): CheckResult {
     else if (stmt.kind === 'change') checkChange(stmt);
     else {
       if (pendingChange) report('warning', 'W302', `You changed to ${pendingChange.line!.text} but never rode it`, pendingChange.span);
-      if (boarded && rides.length === 0 && !diagnostics.some((d) => d.severity === 'error')) {
+      const wroteRide = statements.some((s) => s.kind === 'ride');
+      if (boarded && !wroteRide && !hasSyntaxErrors && !diagnostics.some((d) => d.severity === 'error')) {
         report('warning', 'W303', 'You exit without riding anywhere', stmt.keyword);
       }
       exited = true;

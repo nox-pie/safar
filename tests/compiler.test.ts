@@ -162,3 +162,45 @@ describe('error recovery regressions', () => {
     expect(errors('board Tis Hazari; ride Magenta to Inderok; exit')).toEqual(['E208', 'E206']);
   });
 });
+
+// Found in pre-release review.
+describe('unknown-line recovery', () => {
+  it('a misspelled change line does not keep the old line in effect', () => {
+    expect(codes('board Kashmere Gate; ride Yellow to Rajiv Chowk; change Blu; ride to Mandi House; exit')).toEqual(['E207']);
+  });
+
+  it('a misspelled first-ride line is reported once', () => {
+    expect(codes('board Rajiv Chowk; ride Yelow to Hauz Khas; change Magenta; ride to Botanical Garden; exit')).toEqual(['E207']);
+    expect(codes('board Rajiv Chowk; ride Yelow to Hauz Khas; ride to Saket; exit')).toEqual(['E207']);
+  });
+
+  it('an ambiguous first ride does not make the next change "nothing to change from"', () => {
+    expect(codes('board Rajiv Chowk; ride to Hauz Khas; change Magenta; ride to Botanical Garden; exit')).toEqual(['E210']);
+    // The change itself is still checked, and reported where it happens rather than at the next ride.
+    expect(codes('board Rajiv Chowk; ride to ITO; change Blue; ride to Noida City Centre; exit')).toEqual(['E210', 'E213']);
+  });
+
+  it('resumes line checking at the next named line', () => {
+    expect(codes('board Rajiv Chowk; ride Yelow to Hauz Khas; ride Magenta to Botanical Garden; exit')).toEqual(['E207']);
+    expect(errors('board Rajiv Chowk; ride Yelow to Hauz Khas; ride Magenta to Saket; exit')).toEqual(['E207', 'E208']);
+  });
+});
+
+describe('syntax-aware structure checks', () => {
+  it('does not claim "no ride" or "empty" when the parser already reported the problem', () => {
+    expect(codes('board Rajiv Chowk; ride Yellow; exit')).toEqual(['E103']);
+    expect(codes('board Rajiv Chowk; to Saket; exit')).toEqual(['E107']);
+    expect(codes('strat Rajiv Chowk')).toEqual(['E106']);
+  });
+
+  it('does not "fix" a line name into a station', () => {
+    const d = compile('board Rajiv Chowk; ride Yellow; exit').diagnostics[0];
+    expect(d.fix).toBeUndefined();
+    expect(d.help).toContain('ride Yellow to <station>');
+    expect(compile('board Rajiv Chowk; ride Hauz Khas; exit').diagnostics[0].fix?.text).toBe('to Hauz Khas');
+  });
+
+  it('does not suggest anything for a one-letter name', () => {
+    expect(compile('board X; exit').diagnostics[0].fix).toBeUndefined();
+  });
+});

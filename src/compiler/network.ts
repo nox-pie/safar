@@ -82,7 +82,8 @@ interface NameEntry {
 function suggest(query: string, entries: NameEntry[], limit: number): string[] {
   const q = normalize(query);
   if (!q) return [];
-  const threshold = Math.max(2, Math.floor(q.length / 3));
+  // Never allow more edits than the query has characters, or 'X' would "match" 'T1'.
+  const threshold = Math.min(Math.max(2, Math.floor(q.length / 3)), q.length - 1);
   const scored: { name: string; score: number }[] = [];
   for (const e of entries) {
     const score = q.length >= 3 && e.key.startsWith(q) ? 1 : levenshtein(q, e.key, threshold);
