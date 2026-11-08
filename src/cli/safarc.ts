@@ -57,8 +57,11 @@ export function main(argv: string[]): number {
     return 2;
   }
   const { values: opts, positionals: files } = parsed;
-  const color = !opts['no-color'] && !process.env.NO_COLOR && (Boolean(process.env.FORCE_COLOR) || process.stderr.isTTY === true);
-  const dim = (s: string) => (color ? `\x1b[2m${s}\x1b[0m` : s);
+  // Decided per stream: diagnostics go to stderr, output to stdout, and either may be redirected.
+  const colorFor = (stream: NodeJS.WriteStream) =>
+    !opts['no-color'] && !process.env.NO_COLOR && (Boolean(process.env.FORCE_COLOR) || stream.isTTY === true);
+  const color = colorFor(process.stderr);
+  const dim = (s: string) => (colorFor(process.stdout) ? `\x1b[2m${s}\x1b[0m` : s);
   const green = (s: string) => (color ? `\x1b[32m${s}\x1b[0m` : s);
   const red = (s: string) => (color ? `\x1b[31m${s}\x1b[0m` : s);
 

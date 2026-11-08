@@ -72,3 +72,17 @@ describe('safarc main()', () => {
     }
   });
 });
+
+describe('safarc output streams', () => {
+  it('does not colour stdout when only stderr is a terminal', () => {
+    const r = spawnSync(process.execPath, [CLI, '-q', 'examples/airport.safar', 'examples/branch-line.safar'], {
+      cwd: ROOT, encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '' },
+    });
+    expect(r.stdout).not.toContain('\x1b[');
+  });
+
+  it('rounds JSON time breakdowns', () => {
+    const json = JSON.parse(safarc(['--emit', 'json', 'examples/branch-line.safar']).stdout);
+    expect(json.journey.breakdown).toEqual({ wait: 3, riding: 37.4, transfers: 4, total: 44.4 });
+  });
+});

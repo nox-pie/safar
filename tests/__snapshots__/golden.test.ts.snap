@@ -101,8 +101,8 @@ exports[`branch-line.safar > JSON 1`] = `
   "diagnostics": [],
   "journey": {
     "breakdown": {
-      "riding": 37.400000000000006,
-      "total": 44.400000000000006,
+      "riding": 37.4,
+      "total": 44.4,
       "transfers": 4,
       "wait": 3,
     },
@@ -485,8 +485,8 @@ exit
   ],
   "journey": {
     "breakdown": {
-      "riding": 48.400000000000006,
-      "total": 56.400000000000006,
+      "riding": 48.4,
+      "total": 56.4,
       "transfers": 5,
       "wait": 3,
     },

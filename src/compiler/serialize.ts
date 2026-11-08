@@ -35,7 +35,8 @@ export function resultToJSON(r: CompileResult) {
       origin: j.origin.name,
       destination: j.destination.name,
       minutes: Math.round(j.minutes.total),
-      breakdown: j.minutes,
+      // Rounded: the raw sums carry float noise (37.400000000000006).
+      breakdown: Object.fromEntries(Object.entries(j.minutes).map(([k, v]) => [k, Math.round(v * 10) / 10])),
       stations: j.stationCount,
       stops: j.hops,
       interchanges: j.interchanges.map((s) => s.name),
