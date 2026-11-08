@@ -64,7 +64,7 @@ are *helpful*, not just correct.
 | <img src="docs/images/fix-it.png" alt="E212: Patel Chowk is not an interchange, with a fix to ride to Central Secretariat first"> | <img src="docs/images/typos.png" alt="Five typos, each reported once with a did-you-mean fix"> |
 
 The checker keeps going after an error. It either *repairs* its state (assumes the change you asked
-for) or *poisons* it (position unknown after a misspelled station), so one mistake is reported once.
+for) or *poisons* it (position or line unknown after a misspelled name), so one mistake is reported once.
 Every fix-it is property-tested to actually remove the error it targets.
 
 ## The `safarc` CLI
@@ -142,7 +142,7 @@ The full write-up, including design decisions, error recovery and the overlay-ed
 
 | Metric | Value |
 | --- | --- |
-| Tests | 62, running in ~3 s |
+| Tests | 71, running in ~3 s |
 | Line coverage (compiler + CLI) | 98.5%, with thresholds enforced in CI |
 | Fuzzed programs per run | 6,000 (seeded, reproducible) |
 | Diagnostics reached by fuzzing | 27 / 27 |

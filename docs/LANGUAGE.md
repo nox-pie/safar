@@ -134,5 +134,6 @@ targets.
 ### Error recovery
 
 The checker never stops at the first error. After a mistake it either repairs its state
-optimistically (assumes you did make the change you asked for) or marks your position as *unknown*
-(after an unknown station), so one mistake is reported once instead of cascading.
+optimistically (assumes you did make the change you asked for) or marks what it can't know as
+*unknown*: your position after an unknown station, your line after an unknown line or an ambiguous
+first ride. One mistake is then reported once instead of cascading.

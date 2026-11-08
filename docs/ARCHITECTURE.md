@@ -70,9 +70,11 @@ Design decisions worth calling out:
   Yamuna Bank. "Is there a direct train?" becomes "do both stations appear in one service?", and
   E216 falls out naturally.
 - **Recovery without cascades.** After an error the checker either *repairs* the state (assumes
-  the change you asked for happened) or *poisons* it (position unknown after a misspelled station).
-  Checks that need the poisoned value are skipped, so one typo produces one error. The fuzzer found
-  two bugs here; see [Testing](#7-testing-strategy).
+  the change you asked for happened) or *poisons* it: the position is unknown after a misspelled
+  station, and the line is unknown after a misspelled line or an ambiguous first ride. Checks that
+  need the poisoned value are skipped, so one typo produces one error. Checks that don't need it still
+  run: after an unknown line, `change Blue` is still checked against the current station. The fuzzer
+  and a pre-release review found the bugs here; see [Testing](#7-testing-strategy).
 - **Fix-its are plain text edits** (`{ span, text }`), produced by the same code that detects
   the error. Some come from a nearest-interchange search, and some from the route planner (E208's fix
   is a complete working route from where you are).
@@ -139,7 +141,9 @@ none of the semantic checks. Switching to the grammar-aware generator exposed tw
 2. A typo in a ride's destination hid a genuine error about the boarding line. That check now runs
    first.
 
-Both have regression tests.
+A later independent review found the same class of bug for *lines*. After `change Blu`, the old line
+stayed in effect, and after a misspelled first-ride line, the next `change` claimed you hadn't ridden
+anything yet. Both were fixed with an explicit *unknown line* state. All of these have regression tests.
 
 ## 8. Web playground
 
