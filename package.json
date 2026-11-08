@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A compiler for Delhi Metro journeys: a tiny DSL with a lexer, parser, semantic checker, route planner, CLI and live web playground.",
   "keywords": ["compiler", "dsl", "parser", "static-analysis", "typescript", "delhi-metro", "route-planning"],
-  "author": "Prashant Singh (https://github.com/nox-pie)",
+  "author": "Prashant Kumar (https://github.com/nox-pie)",
   "license": "MIT",
   "homepage": "https://nox-pie.github.io/safar/",
   "repository": {

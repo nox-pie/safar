@@ -214,5 +214,5 @@ docs/                language reference, architecture, images
 
 ## License
 
-[MIT](LICENSE) © Prashant Singh. Station data is compiled from public Delhi Metro maps. This
+[MIT](LICENSE) © Prashant Kumar. Station data is compiled from public Delhi Metro maps. This
 project is not affiliated with DMRC.
